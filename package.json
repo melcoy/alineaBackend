@@ -1,0 +1,11 @@
+{
+  "prisma": {
+    "schema": "db/main/schema.prisma",
+    "seed": "node db/main/seed.js"
+  },
+  "dependencies": {
+    "@prisma/client": "^4.8.1",
+    "express": "^4.18.2",
+    "prisma": "^4.8.1"
+  }
+}

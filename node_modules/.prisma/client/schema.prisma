@@ -1,0 +1,38 @@
+generator client {
+    provider        = "prisma-client-js"
+    previewFeatures = ["multiSchema"]
+}
+
+datasource db {
+    provider = "sqlserver"
+    url      = env("DB_URL")
+    schemas  = ["master", "transaction"]
+}
+
+model MasterItem {
+    id             Int     @id @default(autoincrement())
+    priceId        String
+    hold           Int
+    versionNo      Int
+    custName       String
+    countryName    String
+    countryCode    String?
+    salesRepId     String
+    itemId         String
+    description    String? @db.Text
+    unitId         String
+    currencyId     String
+    unitPrice      Float
+    lobCode        String
+    lobName        String
+    brand          String
+    prioritySuppID String
+    suppName       String  @db.Text
+    weight         Int     @default(0)
+    length         Int     @default(0)
+    width          Int     @default(0)
+    height         Int     @default(0)
+
+    @@map("master_items")
+    @@schema("master")
+}
