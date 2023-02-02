@@ -1,4 +1,4 @@
-import router from "./v1";
+import v1 from "./v1/index.js";
 
 export default {
   v1,

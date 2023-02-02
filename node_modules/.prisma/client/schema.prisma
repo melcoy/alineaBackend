@@ -9,30 +9,167 @@ datasource db {
     schemas  = ["master", "transaction"]
 }
 
-model MasterItem {
-    id             Int     @id @default(autoincrement())
-    priceId        String
-    hold           Int
-    versionNo      Int
-    custName       String
-    countryName    String
-    countryCode    String?
-    salesRepId     String
-    itemId         String
-    description    String? @db.Text
-    unitId         String
-    currencyId     String
-    unitPrice      Float
-    lobCode        String
-    lobName        String
-    brand          String
-    prioritySuppID String
-    suppName       String  @db.Text
-    weight         Int     @default(0)
-    length         Int     @default(0)
-    width          Int     @default(0)
-    height         Int     @default(0)
+model MasterCountry {
+    id          Int    @id @default(autoincrement())
+    codeCountry String
+    countryName String
+    typeCountry String
+    isActive    Int    @default(1)
 
-    @@map("master_items")
+    @@map("master_country")
+    @@schema("master")
+}
+
+model MasterDosage {
+    id          Int    @id @default(autoincrement())
+    nameDossage String
+    isActive    Int    @default(1)
+
+    @@map("master_dossage")
+    @@schema("master")
+}
+
+model MasterSpeciality {
+    id             Int                   @id @default(autoincrement())
+    nameSpeciality String
+    isActive       Int                   @default(1)
+    umbrellaBrand  MasterUmbrellaBrand[]
+
+    @@map("master_speciality")
+    @@schema("master")
+}
+
+model MasterUmbrellaBrand {
+    id                 Int               @id @default(autoincrement())
+    nameUmbrellaBrand  String
+    isActive           Int               @default(1)
+    masterBrand        MasterBrand[]
+    MasterSpeciality   MasterSpeciality? @relation(fields: [masterSpecialityId], references: [id])
+    masterSpecialityId Int?
+
+    @@map("master_umbrella_brand")
+    @@schema("master")
+}
+
+model MasterBrand {
+    id                Int                 @id @default(autoincrement())
+    umbrellaBrand     MasterUmbrellaBrand @relation(fields: [umbrellaBrandId], references: [id])
+    umbrellaBrandId   Int
+    nameBrand         String
+    isActive          Int                 @default(1)
+    MasterComposition MasterComposition[]
+
+    @@map("master_brand")
+    @@schema("master")
+}
+
+model MasterComposition {
+    id              Int         @id @default(autoincrement())
+    brand           MasterBrand @relation(fields: [brandId], references: [id])
+    brandId         Int
+    nameComposition String
+    sku             String
+    isActive        Int         @default(1)
+
+    @@map("master_composition")
+    @@schema("master")
+}
+
+model MasterDistributionPartner {
+    id       Int    @id @default(autoincrement())
+    nameDist String
+    isActive Int    @default(1)
+
+    @@map("master_distribution_partner")
+    @@schema("master")
+}
+
+model MarketSurveyRequest {
+    id                String   @id @default(uuid())
+    numberDocument    String
+    type              String
+    idBrand           Int
+    country           String
+    brand             String
+    dosageForm        String
+    date              DateTime @default(now())
+    originatorBrand   String
+    originatorCompany String
+    statusForm        String
+    approvedIdUser    String
+    createdAt         DateTime @default(now())
+    updatedAt         DateTime @updatedAt
+    updatedBy         String?
+    createdBy         String?
+
+    @@map("market_survei_request")
+    @@schema("transaction")
+}
+
+model MarketSurvey {
+    id                 String               @id @default(uuid())
+    numberDocument     String
+    pic                String
+    date               DateTime             @default(now())
+    priceSurveyed      String
+    statusForm         String
+    approvedIdUser     String
+    createdAt          DateTime             @default(now())
+    updatedAt          DateTime             @updatedAt
+    updatedBy          String?
+    createdBy          String?
+    marketSurveyDetail MarketSurveyDetail[]
+
+    @@map("market_survey")
+    @@schema("transaction")
+}
+
+model MarketSurveyDetail {
+    id            String @id @default(uuid())
+    brand         String
+    unit          Int
+    uomId         String
+    manufacturer  String
+    countryOrigin String
+    priceLocal    Float
+    priceUSD      Float
+    sales         String
+
+    MarketSurvey           MarketSurvey?            @relation(fields: [marketSurveyId], references: [id])
+    marketSurveyId         String?
+    marketSurveyDetailComp MarketSurveyDetailComp[]
+
+    @@map("market_survey_detail")
+    @@schema("transaction")
+}
+
+model MarketSurveyDetailComp {
+    id                   String              @id @default(uuid())
+    composition          String
+    MarketSurveyDetail   MarketSurveyDetail? @relation(fields: [marketSurveyDetailId], references: [id])
+    marketSurveyDetailId String?
+
+    @@map("market_survey_detail_Comp")
+    @@schema("transaction")
+}
+
+model MasterRole {
+    id        Int      @id @default(autoincrement())
+    roleName  String
+    createdAt DateTime @default(now())
+    updatedAt DateTime @updatedAt
+    updatedBy String?
+    createdBy String?
+
+    @@map("master_role")
+    @@schema("master")
+}
+
+model MasterRoleUser {
+    id           Int    @id @default(autoincrement())
+    userId       String
+    nameRoleUser String
+
+    @@map("master_role_user")
     @@schema("master")
 }
